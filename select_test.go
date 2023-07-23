@@ -147,7 +147,7 @@ func TestSelect(t *testing.T) {
 		result := make([]t1, 0)
 		err = Select(ctx, pool, &result, "SELECT * FROM UNNEST(ARRAY['foo', 'bar']) AS name")
 		notNilError(t, err)
-		errorContains(t, err, "has no matches to columns")
+		errorContains(t, err, "have no matches to columns")
 	})
 
 	t.Run("nil slice", func(t *testing.T) {
