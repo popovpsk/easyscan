@@ -145,20 +145,18 @@ func addToSlice(slice reflect.Value, element reflect.Value) {
 func getSliceForScan(t reflect.Type, fieldDescriptions []pgproto3.FieldDescription, exemplarPointer reflect.Value) ([]interface{}, error) {
 	scans := make([]interface{}, len(fieldDescriptions))
 
-	tags := getStructDBTags(t)
+	tags := getTaggedFields(t)
 
 	e := exemplarPointer.Elem()
 
 	matchingFailed := true
 
 	for idx, fd := range fieldDescriptions {
-		fieldIdx, ok := tags.find(fd.Name)
-		if ok {
+		s := tags.find(fd.Name, e)
+		if s != emptyScanObj {
 			matchingFailed = false
-			scans[idx] = e.Field(fieldIdx).Addr().Interface()
-		} else {
-			scans[idx] = emptyScanObj
 		}
+		scans[idx] = s
 	}
 
 	if matchingFailed {
