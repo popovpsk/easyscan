@@ -60,25 +60,21 @@ Primitive types such as int, string, and types implementing sql.Scanner.
 
 ## Benchmarks 
 ```shell
-BenchmarkGet_PurePgx-12                                         10327090               582.8 ns/op          1232 B/op          6 allocs/op
-BenchmarkGet_Easyscan-12                                         2203040              2709 ns/op            1296 B/op         10 allocs/op
-BenchmarkGet_GeorgysavaScany-12                                   167077             36841 ns/op           12090 B/op        356 allocs/op
-
-BenchmarkSelect20RowsToValues_PurePgx-12                          255427             23471 ns/op           59456 B/op         94 allocs/op
-BenchmarkSelect20RowsToValues_Easyscan-12                         729572              8395 ns/op           12576 B/op         12 allocs/op
-BenchmarkSelect20RowsToValues_GeorgysavaScany-12                   51952            117658 ns/op           72754 B/op        526 allocs/op
-
-BenchmarkSelect20RowsToPointers_PurePgx-12                        510237             12189 ns/op           24736 B/op         94 allocs/op
-BenchmarkSelect20RowsToPointers_Easyscan-12                       425806             13654 ns/op           13248 B/op         72 allocs/op
-BenchmarkSelect20RowsToPointers_GeorgysavaScany-12                 61044             98633 ns/op           37781 B/op        526 allocs/op
-
-BenchmarkSelect1000RowsWithoutPrealloc_PurePgx-12                  10000            580567 ns/op         1831151 B/op         30 allocs/op
-BenchmarkSelect1000RowsWithout_PreallocEasyscan-12                  9400            593476 ns/op         1698429 B/op         58 allocs/op
-BenchmarkSelect1000RowsWithoutPrealloc_GeorgysavaScany-12           1480           4094572 ns/op         3005140 B/op       8382 allocs/op
-
-BenchmarkSelect1000RowsWithPrealloc_PurePgx-12                     35184            171437 ns/op          541908 B/op          8 allocs/op
-BenchmarkSelect1000RowsWithPrealloc_Easyscan-12                    27218            220415 ns/op          541986 B/op         12 allocs/op
-BenchmarkSelect1000RowsWithPrealloc_GeorgysavaScany-12              1710           3495441 ns/op         1842449 B/op       8359 allocs/op
+BenchmarkGet_PurePgx-12                                         19189694               310.7 ns/op           920 B/op          3 allocs/op
+BenchmarkGet_Easyscan-12                                         3206949              1872 ns/op             952 B/op          5 allocs/op
+BenchmarkGet_GeorgysavaScany-12                                   266756             22162 ns/op            8635 B/op        231 allocs/op
+BenchmarkSelect20RowsToValues_PurePgx-12                          447489             13084 ns/op           44344 B/op         47 allocs/op
+BenchmarkSelect20RowsToValues_Easyscan-12                        1000000              5258 ns/op            9152 B/op          6 allocs/op
+BenchmarkSelect20RowsToValues_GeorgysavaScany-12                   81523             74438 ns/op           53281 B/op        316 allocs/op
+BenchmarkSelect20RowsToPointers_PurePgx-12                        898324              6459 ns/op           18448 B/op         47 allocs/op
+BenchmarkSelect20RowsToPointers_Easyscan-12                       719828              7571 ns/op            9512 B/op         36 allocs/op
+BenchmarkSelect20RowsToPointers_GeorgysavaScany-12                 94191             64261 ns/op           27269 B/op        316 allocs/op
+BenchmarkSelect1000RowsWithoutPrealloc_PurePgx-12                  16788            357468 ns/op         1340741 B/op         15 allocs/op
+BenchmarkSelect1000RowsWithout_PreallocEasyscan-12                 14096            458766 ns/op         1341061 B/op         29 allocs/op
+BenchmarkSelect1000RowsWithoutPrealloc_GeorgysavaScany-12           2154           2870733 ns/op         2304837 B/op       4245 allocs/op
+BenchmarkSelect1000RowsWithPrealloc_PurePgx-12                     56071            114775 ns/op          402330 B/op          4 allocs/op
+BenchmarkSelect1000RowsWithPrealloc_Easyscan-12                    43491            130274 ns/op          402369 B/op          6 allocs/op
+BenchmarkSelect1000RowsWithPrealloc_GeorgysavaScany-12              2594           2331992 ns/op         1357855 B/op       4232 allocs/op
 ```
 
 To find the benchmarks in the benchmarks branch and run them using make bench, follow these steps:
