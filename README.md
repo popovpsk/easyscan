@@ -17,14 +17,14 @@ Make sure you have Go installed and set up correctly. To install easyscan, simpl
 
 ```bash
 
-go get -u github.com/yourusername/easyscan
+go get -u github.com/popovpsk/easyscan
 ```
 
 ## Usage
 Import the easyscan package in your Go code:
 
 ```go
-import "github.com/yourusername/easyscan"
+import "github.com/popovpsk/easyscan"
 ```
 
 ### Connect to the Database
