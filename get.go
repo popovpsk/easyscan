@@ -23,7 +23,7 @@ func Get(ctx context.Context, conn pgxExecutor, dest interface{}, query string, 
 
 	objectType := objectPtr.Type().Elem()
 
-	isPgxSupported := isPgxSupportedType(objectType)
+	isPgxSupported := isPgxSupportedType(objectType, true)
 	if objectType.Kind() != reflect.Struct && !isPgxSupported {
 		return fmt.Errorf("expected a struct or a pgx supported type but got %s", objectType.Kind())
 	}

@@ -52,7 +52,7 @@ func Select(ctx context.Context, conn pgxExecutor, dest interface{}, query strin
 		exemplarType = exemplarType.Elem()
 	}
 
-	isSupported := isPgxSupportedType(exemplarType)
+	isSupported := isPgxSupportedType(exemplarType, true)
 	if exemplarType.Kind() != reflect.Struct && !isSupported {
 		return fmt.Errorf("expected a struct or a pointer to a struct in the slice but got %s", exemplarType.Kind())
 	}

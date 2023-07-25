@@ -76,7 +76,7 @@ func Test_isSupportedType(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isPgxSupportedType(tt.arg); got != tt.want {
+			if got := isPgxSupportedType(tt.arg, true); got != tt.want {
 				t.Errorf("isPgxSupportedType() = %v, want %v", got, tt.want)
 			}
 		})
