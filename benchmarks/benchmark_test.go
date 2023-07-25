@@ -200,6 +200,19 @@ func BenchmarkGet_Easyscan(b *testing.B) {
 	}
 }
 
+func BenchmarkGet_SqlGet(b *testing.B) {
+	ctx := context.Background()
+	const rows = 1
+
+	for i := 0; i < b.N; i++ {
+		user := User{}
+		err := sqlGet(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &user, "select * from users where name=$1", "test")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 func BenchmarkGet_GeorgysavaScany(b *testing.B) {
 	ctx := context.Background()
 	const rows = 1
@@ -251,6 +264,19 @@ func BenchmarkSelect20RowsToValues_Easyscan(b *testing.B) {
 	}
 }
 
+func BenchmarkSelect20RowsToValues_SqlSelect(b *testing.B) {
+	ctx := context.Background()
+	const rows = 20
+
+	for i := 0; i < b.N; i++ {
+		user := make([]User, 0, 20)
+		err := sqlSelect(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &user, "select * from users")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 func BenchmarkSelect20RowsToValues_GeorgysavaScany(b *testing.B) {
 	ctx := context.Background()
 	const rows = 20
@@ -296,6 +322,19 @@ func BenchmarkSelect20RowsToPointers_Easyscan(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		user := make([]*User, 0)
 		err := easyscan.Select(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &user, "select * from users")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func BenchmarkSelect20RowsToPointers_sqlSelect(b *testing.B) {
+	ctx := context.Background()
+	const rows = 20
+
+	for i := 0; i < b.N; i++ {
+		user := make([]*User, 0)
+		err := sqlSelect(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &user, "select * from users")
 		if err != nil {
 			panic(err)
 		}
@@ -354,6 +393,19 @@ func BenchmarkSelect1000RowsWithout_PreallocEasyscan(b *testing.B) {
 	}
 }
 
+func BenchmarkSelect1000RowsWithout_Prealloc_SqlSelect(b *testing.B) {
+	ctx := context.Background()
+	const rows = 1000
+
+	for i := 0; i < b.N; i++ {
+		user := make([]User, 0)
+		err := sqlSelect(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &user, "select * from users")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
 func BenchmarkSelect1000RowsWithoutPrealloc_GeorgysavaScany(b *testing.B) {
 	ctx := context.Background()
 	const rows = 1000
@@ -400,6 +452,19 @@ func BenchmarkSelect1000RowsWithPrealloc_Easyscan(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		users := make([]User, 0, rows)
 		err := easyscan.Select(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &users, "select * from users")
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func BenchmarkSelect1000RowsWithPrealloc_sqlSelect(b *testing.B) {
+	ctx := context.Background()
+	const rows = 1000
+
+	for i := 0; i < b.N; i++ {
+		users := make([]User, 0, rows)
+		err := sqlSelect(ctx, &dbQueryStub{queryType: usersQuery, rows: rows}, &users, "select * from users")
 		if err != nil {
 			panic(err)
 		}
