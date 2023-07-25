@@ -18,6 +18,7 @@ const connString = "user=postgres password=postgres host=localhost dbname=easysc
 
 func TestSelect(t *testing.T) {
 	t.Parallel()
+
 	ctx := context.Background()
 	pool, err := pgxpool.Connect(ctx, connString)
 	noError(t, err)
@@ -485,6 +486,54 @@ VALUES ('1', '2012-03-04 10:11:12', true),
 	}
 
 	wg.Wait()
+}
+
+func TestSelectEmbeddedTypes(t *testing.T) {
+	t.Parallel()
+	ctx := context.Background()
+	pool, err := pgxpool.Connect(ctx, connString)
+	noError(t, err)
+	defer pool.Close()
+
+	type RowChanges struct {
+		CreatedAt time.Time  `db:"created_at"`
+		UpdatedAt *time.Time `db:"updated_at"`
+		DeletedAt *time.Time `db:"deleted_at"`
+	}
+
+	type RowInfo struct {
+		RowChanges
+		Version int `db:"version"`
+	}
+
+	type Person struct {
+		anon struct {
+			Id int `db:"id"` //will be ignore
+		}
+
+		ID   int    `db:"id"`
+		Name string `db:"name"`
+		Age  int    `db:"age"`
+		RowInfo
+	}
+
+	const query = `SELECT 10 as id, 
+	'test' as name, 
+	 42 as age, 
+	'2012-03-04 10:11:12'::timestamp as created_at, 
+	'2012-03-04 10:11:13'::timestamp as updated_at,
+	NULL::timestamp as deleted_at,
+    21 as version`
+
+	var person Person
+	err = Get(ctx, pool, &person, query)
+	noError(t, err)
+
+	equal(t, 10, person.ID)
+	equal(t, "test", person.Name)
+	equal(t, 42, person.Age)
+	equal(t, true, time.Date(2012, 3, 4, 10, 11, 12, 0, time.UTC).Equal(person.CreatedAt))
+	equal(t, true, time.Date(2012, 3, 4, 10, 11, 13, 0, time.UTC).Equal(*person.UpdatedAt))
 }
 
 func boolPtr(v bool) *bool {

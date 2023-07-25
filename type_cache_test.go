@@ -51,18 +51,31 @@ func Test_getStructDBTags(t *testing.T) {
 			go func() {
 				defer wg.Done()
 				for j := 0; j < iterations; j++ {
-					tags := getStructDBTags(reflect.TypeOf(testType{}))
-					for f := 0; f < 5; f++ {
-						idx, ok := tags.find([]byte(fmt.Sprintf("Field%d", f)))
-						equal(t, true, ok)
-						equal(t, f, idx)
-					}
+					{
+						tt := reflect.TypeOf(testType{})
+						tv := reflect.New(tt).Elem()
+						tags := getTaggedFields(tt)
+						for f := 0; f < 5; f++ {
+							eface := tags.find([]byte(fmt.Sprintf("Field%d", f)), tv)
+							v, ok := eface.(*int)
+							equal(t, true, ok)
 
-					bigTypeTags := getStructDBTags(reflect.TypeOf(bigTestType{}))
-					for f := 0; f < 21; f++ {
-						idx, ok := bigTypeTags.find([]byte(fmt.Sprintf("Field%d", f)))
-						equal(t, true, ok)
-						equal(t, f, idx)
+							*v = f
+							equal(t, f, int(tv.Field(f).Int()))
+						}
+					}
+					{
+						btt := reflect.TypeOf(bigTestType{})
+						btv := reflect.New(btt).Elem()
+						bigType := getTaggedFields(btt)
+						for f := 0; f < 21; f++ {
+							eface := bigType.find([]byte(fmt.Sprintf("Field%d", f)), btv)
+							v, ok := eface.(*int)
+							equal(t, true, ok)
+
+							*v = f
+							equal(t, f, int(btv.Field(f).Int()))
+						}
 					}
 				}
 			}()
@@ -71,15 +84,15 @@ func Test_getStructDBTags(t *testing.T) {
 	})
 
 	t.Run("not found", func(t *testing.T) {
-		tags := getStructDBTags(reflect.TypeOf(testType{}))
-		idx, ok := tags.find([]byte("test_123"))
-		equal(t, false, ok)
-		equal(t, 0, idx)
+		tt := new(testType)
+		tags := getTaggedFields(reflect.TypeOf(*tt))
+		f := tags.find([]byte("test_123"), reflect.ValueOf(*tt))
+		equal(t, true, emptyScanObj == f.(emptyScan))
 
-		tags = getStructDBTags(reflect.TypeOf(bigTestType{}))
-		idx, ok = tags.find([]byte("test_123"))
-		equal(t, false, ok)
-		equal(t, 0, idx)
+		btt := new(bigTestType)
+		tags = getTaggedFields(reflect.TypeOf(*btt))
+		f = tags.find([]byte("test_123"), reflect.ValueOf(*btt))
+		equal(t, true, emptyScanObj == f.(emptyScan))
 	})
 
 }
