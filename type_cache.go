@@ -7,7 +7,7 @@ import (
 
 const (
 	dbTagName           = "db"
-	sliceContainerLimit = 16
+	sliceContainerLimit = 32
 )
 
 type fieldsContainer interface {
@@ -17,6 +17,7 @@ type fieldsContainer interface {
 type fieldsContainerSlice []structField
 type fieldsContainerMap map[string]fieldPath
 
+// intrusive linked list
 type fieldPath struct {
 	idx  int
 	next *fieldPath

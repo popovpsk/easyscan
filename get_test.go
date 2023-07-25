@@ -96,14 +96,14 @@ func TestGet(t *testing.T) {
 		var result int
 		err = Get(ctx, pool, result, "SELECT 1")
 		notNilError(t, err)
-		errorContains(t, err, "must pass a pointer")
+		errorContains(t, err, "must be a non nil pointer")
 	})
 
 	t.Run("nil ptr", func(t *testing.T) {
 		var result *int
 		err = Get(ctx, pool, result, "SELECT 1")
 		notNilError(t, err)
-		errorContains(t, err, "nil pointer passed")
+		errorContains(t, err, "must be a non nil pointer")
 	})
 
 	t.Run("nil conn", func(t *testing.T) {

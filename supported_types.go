@@ -13,7 +13,7 @@ func implementsScanner(objectType reflect.Type) bool {
 	return reflect.PtrTo(objectType).Implements(scannerType)
 }
 
-func isSupportedType(objectType reflect.Type) bool {
+func isPgxSupportedType(objectType reflect.Type) bool {
 	switch objectType.Kind() {
 	case reflect.Bool,
 		reflect.Int,

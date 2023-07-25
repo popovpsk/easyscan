@@ -17,21 +17,15 @@ func Get(ctx context.Context, conn pgxExecutor, dest interface{}, query string, 
 	}
 
 	objectPtr := reflect.ValueOf(dest)
-
-	if objectPtr.Kind() != reflect.Ptr {
-		return errors.New("must pass a pointer")
-	}
-
-	if objectPtr.IsNil() {
-		return errors.New("nil pointer passed to Get dest")
+	if objectPtr.Kind() != reflect.Ptr || objectPtr.IsNil() {
+		return errors.New("destination must be a non nil pointer")
 	}
 
 	objectType := objectPtr.Type().Elem()
 
-	objectTypeKind := objectType.Kind()
-
-	if objectTypeKind != reflect.Struct && !isSupportedType(objectType) {
-		return fmt.Errorf("expected a struct or a supported type but got %s", objectTypeKind)
+	isPgxSupported := isPgxSupportedType(objectType)
+	if objectType.Kind() != reflect.Struct && !isPgxSupported {
+		return fmt.Errorf("expected a struct or a pgx supported type but got %s", objectType.Kind())
 	}
 
 	rows, err := conn.Query(ctx, query, args...)
@@ -44,7 +38,7 @@ func Get(ctx context.Context, conn pgxExecutor, dest interface{}, query string, 
 		return pgx.ErrNoRows
 	}
 
-	if isSupportedType(objectType) {
+	if isPgxSupported {
 		err = rows.Scan(dest)
 	} else {
 		scans, e := getSliceForScan(objectType, rows.FieldDescriptions(), objectPtr)

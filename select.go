@@ -30,11 +30,8 @@ func Select(ctx context.Context, conn pgxExecutor, dest interface{}, query strin
 
 	slicePtr := reflect.ValueOf(dest)
 
-	if slicePtr.Kind() != reflect.Ptr {
-		return errors.New("must pass a pointer")
-	}
-	if slicePtr.IsNil() {
-		return errors.New("nil pointer passed to Select dest")
+	if slicePtr.Kind() != reflect.Ptr || slicePtr.IsNil() {
+		return errors.New("destination must be a non nil pointer to slice")
 	}
 
 	slice := slicePtr.Elem()
@@ -55,7 +52,8 @@ func Select(ctx context.Context, conn pgxExecutor, dest interface{}, query strin
 		exemplarType = exemplarType.Elem()
 	}
 
-	if exemplarType.Kind() != reflect.Struct && !isSupportedType(exemplarType) {
+	isSupported := isPgxSupportedType(exemplarType)
+	if exemplarType.Kind() != reflect.Struct && !isSupported {
 		return fmt.Errorf("expected a struct or a pointer to a struct in the slice but got %s", exemplarType.Kind())
 	}
 
@@ -65,7 +63,7 @@ func Select(ctx context.Context, conn pgxExecutor, dest interface{}, query strin
 	}
 	defer rows.Close()
 
-	if isSupportedType(exemplarType) {
+	if isSupported {
 		return scanToSupported(rows, isPtr, slice, exemplarType)
 	}
 
@@ -135,6 +133,7 @@ func addToSlice(slice reflect.Value, element reflect.Value) {
 	if l < slice.Cap() {
 		l++
 		slice.SetLen(l)
+
 		slice.Index(l - 1).Set(element)
 		return
 	}
