@@ -47,6 +47,21 @@ func TestGet(t *testing.T) {
 		equal(t, time.Date(2012, 3, 4, 10, 11, 12, 0, time.UTC), result.UTC())
 	})
 
+	t.Run("time ptr", func(t *testing.T) {
+		result := &time.Time{}
+		err = Get(ctx, pool, &result, "SELECT '2012-03-04 10:11:12'::timestamp")
+		noError(t, err)
+
+		equal(t, time.Date(2012, 3, 4, 10, 11, 12, 0, time.UTC), result.UTC())
+
+		err = Get(ctx, pool, &result, "SELECT NULL::timestamp")
+		noError(t, err)
+		if result != nil {
+			fmt.Println("result must be null")
+			t.Fail()
+		}
+	})
+
 	t.Run("duration", func(t *testing.T) {
 		var result time.Duration
 		err = Get(ctx, pool, &result, "SELECT '1 hour'::interval")
@@ -96,14 +111,14 @@ func TestGet(t *testing.T) {
 		var result int
 		err = Get(ctx, pool, result, "SELECT 1")
 		notNilError(t, err)
-		errorContains(t, err, "must pass a pointer")
+		errorContains(t, err, "must be a non nil pointer")
 	})
 
 	t.Run("nil ptr", func(t *testing.T) {
 		var result *int
 		err = Get(ctx, pool, result, "SELECT 1")
 		notNilError(t, err)
-		errorContains(t, err, "nil pointer passed")
+		errorContains(t, err, "must be a non nil pointer")
 	})
 
 	t.Run("nil conn", func(t *testing.T) {

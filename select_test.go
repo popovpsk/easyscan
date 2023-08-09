@@ -131,7 +131,7 @@ func TestSelect(t *testing.T) {
 		var result []int
 		err = Select(ctx, pool, result, "SELECT 1")
 		notNilError(t, err)
-		errorContains(t, err, "must pass a pointer")
+		errorContains(t, err, "must be a non nil pointer to slice")
 	})
 
 	t.Run("not a slice", func(t *testing.T) {
@@ -155,7 +155,7 @@ func TestSelect(t *testing.T) {
 		var result *[]string
 		err = Select(ctx, pool, result, "SELECT * FROM UNNEST(ARRAY['foo', 'bar'])")
 		notNilError(t, err)
-		errorContains(t, err, "nil pointer passed")
+		errorContains(t, err, "must be a non nil pointer to slice")
 	})
 
 	t.Run("nil conn", func(t *testing.T) {
